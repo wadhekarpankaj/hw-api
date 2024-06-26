@@ -36,8 +36,9 @@ jobs:
       - name: Build and Tag Docker Image
         run: |
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/hw-api:${{ env.RUN_NUMBER }} .
-          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/hw-api:${{ env.RUN_NUMBER }}
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/hw-api:${{ env.RUN_NUMBER }} ${{ secrets.DOCKER_HUB_USERNAME }}/hw-api:latest
       
       - name: Push Docker Image
         run: |
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/my-app:${{ env.RUN_NUMBER }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/hw-api:${{ env.RUN_NUMBER }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/hw-api:latest
