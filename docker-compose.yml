@@ -1,0 +1,36 @@
+services:
+  db-mydatabase: 
+    image: postgres:15.7
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_mydatabase:/var/lib/postgresql/data
+
+  db-testdb:  # test db for unit tests
+    image: postgres:15.7
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: testdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data_testdb:/var/lib/postgresql/data
+
+  web:
+    build: .
+    depends_on:
+      - db-mydatabase
+    environment:
+      DATABASE_URL: postgresql://user:password@db-mydatabase:5432/mydatabase
+      #DATABASE_URL: postgresql://admin_postgresql:g0S3ck839GmBsuR5onf5@hw-api-prod.chg4kueuseh9.eu-central-1.rds.amazonaws.com:5432/hwapiprod
+    ports:
+      - "8000:8000"
+
+volumes:
+  postgres_data_mydatabase:
+  postgres_data_testdb:

@@ -1,0 +1,43 @@
+name: ci-cd-prod
+
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    paths-ignore:
+      - 'README.md'
+      - 'Makefile'
+      - '.infra/**'
+      - 'docs/**'
+    branches: [ "main" ]
+  workflow_dispatch:
+
+
+jobs:
+  ci-cd-prod-build-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Docker Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Version
+        id: version
+        run: echo "RUN_NUMBER=${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+
+      - name: Build and Tag Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/hw-api:${{ env.RUN_NUMBER }} .
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/hw-api:${{ env.RUN_NUMBER }}
+      
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/my-app:${{ env.RUN_NUMBER }}
