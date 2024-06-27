@@ -24,17 +24,11 @@ Before deploying the FastAPI application, make sure you have the following insta
 
 API documentaion - http://localhost:8000/docs#/
 
-Put data:
-
    ```bash
     curl -X 'PUT' 'http://localhost:8000/hello/Pankaj' -H 'accept: */*' -H 'Content-Type: application/json' -d '{"date_of_birth": "2024-06-27"}'
+    curl -X 'GET' 'http://localhost:8000/hello/Pankaj' -H 'accept: application/json'
    ```
 
-Get data:
-
-    ```bash
-      curl -X 'GET' 'http://localhost:8000/hello/Pankaj' -H 'accept: application/json'
-    ```
 3. **Run the tests locally**:
    ```bash
    make unit
@@ -63,6 +57,6 @@ To deploy from local system
    helm install hw-api oci://975050092864.dkr.ecr.eu-central-1.amazonaws.com/hw-api --version 7 -n hw-api
    ```
 
-##System Overview
+## System Overview
 
 ![System Overview](./docs/System_Diagram.drawio.png)
