@@ -61,15 +61,15 @@ jobs:
       
       - name: Update Helm chart version
         run: |
-          CHART_PATH=./.kubernetes/charts/app/Chart.yaml
+          CHART_PATH=./.kubernetes/charts/hw-api/Chart.yaml
           NEW_VERSION=$(printf "%d" ${{ env.RUN_NUMBER }})
           echo "Setting chart version to $NEW_VERSION"
           yq e ".version = \"$NEW_VERSION\"" -i $CHART_PATH
       
       - name: Install dependencies and Package Helm chart
         run: |
-          helm dependency update ./.kubernetes/charts/app
-          helm package ./.kubernetes/charts/app
+          helm dependency update ./.kubernetes/charts/hw-api
+          helm package ./.kubernetes/charts/hw-api
       
       - name: Publish to ECR
         run: |
