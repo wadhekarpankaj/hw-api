@@ -37,27 +37,41 @@ def setup_database():
     # Teardown the database after tests
     Base.metadata.drop_all(bind=engine)
 
-def test_put_user(setup_database):
+def test_put_user():
     response = client.put("/hello/Alice", json={"date_of_birth": "1994-04-07"})
     assert response.status_code == 204
 
-def test_put_user_invalid_date(setup_database):
+def test_update_birthdate():
+    response = client.put("/hello/Alice", json={"date_of_birth": "1990-05-15"})
+    assert response.status_code == 204
+
+def test_wrong_date_format():
+    response = client.put("/hello/Bob", json={"date_of_birth": "12-13-1897"})
+    assert response.status_code == 422
+    assert response.json()["detail"][0]["msg"] == "Input should be a valid date or datetime, invalid character in year"
+
+def test_wrong_username_format():
+    response = client.put("/hello/Tom123", json={"date_of_birth": "1991-03-14"})
+    assert response.status_code == 422
+    assert response.json()["detail"][0]["msg"] == "String should match pattern '^[a-zA-Z]+$'"
+
+def test_put_user_invalid_date():
     response = client.put("/hello/Bob", json={"date_of_birth": "2099-04-07"})
     assert response.status_code == 400
     assert response.json() == {"detail": "Date of birth must be in the past"}
 
-def test_get_user_birthday_message(setup_database):
-    client.put("/hello/Charlie", json={"date_of_birth": "1994-04-07"})
+def test_get_user_birthday_message():
+    client.put("/hello/Charlie", json={"date_of_birth": "1986-05-12"})
     response = client.get("/hello/Charlie")
     assert response.status_code == 200
     assert "Hello, Charlie!" in response.json()["message"]
 
-def test_get_user_not_found(setup_database):
+def test_get_user_not_found():
     response = client.get("/hello/NonExistentUser")
     assert response.status_code == 404
     assert response.json() == {"detail": "User not found"}
 
-def test_get_user_happy_birthday(setup_database):
+def test_get_user_happy_birthday():
     # Set the date_of_birth to today's date to test the happy birthday message
     today = date.today().isoformat()
     client.put("/hello/Dave", json={"date_of_birth": today})
