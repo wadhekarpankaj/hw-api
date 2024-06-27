@@ -48,3 +48,7 @@ async def get_birthday_message(username: str = Path(..., pattern="^[a-zA-Z]+$"),
         message = f"Hello, {username}! Your birthday is in {days_until_birthday} day(s)"
 
     return {"message": message}
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}

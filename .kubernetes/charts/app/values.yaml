@@ -1,0 +1,21 @@
+replicaCount: 2
+
+image:
+  repository: wadhekarpankaj/hw-api
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8000
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+nodeSelector: 
+  node_group : app

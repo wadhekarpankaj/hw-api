@@ -42,3 +42,37 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/hw-api:${{ env.RUN_NUMBER }}
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/hw-api:latest
+      
+      - name: Install yq
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+          sudo chmod +x /usr/bin/yq
+      
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+      
+      - name: Update Helm chart version
+        run: |
+          CHART_PATH=./.kubernetes/charts/app/Chart.yaml
+          NEW_VERSION=$(printf "%d" ${{ env.RUN_NUMBER }})
+          echo "Setting chart version to $NEW_VERSION"
+          yq e ".version = \"$NEW_VERSION\"" -i $CHART_PATH
+      
+      - name: Install dependencies and Package Helm chart
+        run: |
+          helm dependency update ./.kubernetes/charts/app
+          helm package ./.kubernetes/charts/app
+      
+      - name: Publish to ECR
+        run: |
+          aws ecr get-login-password --region eu-central-1 | helm registry login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
+          chart_name=$(ls *.tgz)
+          helm push "$chart_name" oci://${{ secrets.ECR_REPOSITORY_URI }}
