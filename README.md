@@ -25,11 +25,12 @@ Before deploying the FastAPI application, make sure you have the following insta
 API documentaion - http://localhost:8000/docs#/
 
    ```bash
-    curl -X 'PUT' 'http://localhost:8000/hello/Pankaj' -H 'accept: */*' -H 'Content-Type: application/json' -d '{"date_of_birth": "2024-06-27"}'
-    curl -X 'GET' 'http://localhost:8000/hello/Pankaj' -H 'accept: application/json'
+      curl -X 'PUT' 'http://localhost:8000/hello/Pankaj' -H 'accept: */*' -H 'Content-Type: application/json' -d '{"date_of_birth": "2024-06-27"}'
+      curl -X 'GET' 'http://localhost:8000/hello/Pankaj' -H 'accept: application/json'
    ```
 
 3. **Run the tests locally**:
+
    ```bash
    make unit
    ```
@@ -40,10 +41,11 @@ All the terraform configuration files are kept in .infra folder
 terrafrom plan
 
    ```bash
-	   terraform plan -var-file="prod.tfvars"
+   terraform plan -var-file="prod.tfvars"
    ```
 
 terrafrom apply
+
    ```bash
     terraform apply -var-file="prod.tfvars"
    ```
@@ -60,3 +62,7 @@ To deploy from local system
 ## System Overview
 
 ![System Overview](./docs/System_Diagram.drawio.png)
+
+## CI/CD Overview
+
+![CI/CD Overview](./docs/CI_CD.drawio.png)
